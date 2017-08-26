@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>贪吃蛇</title>
+	<style type="text/css">
+		body{}
+		.wrap{
+			height: 600px;
+			width: 600px;
+			border: 1px solid black;
+			margin: auto;
+			position:absolute;
+			top: 0;bottom: 0;left: 0;right: 0;
+		}
+		.block{
+			width: 58px;
+			height: 58px;
+			float: left;
+			border: 1px solid #D49C2A;
+		}
+		.control
+		{
+			height: 300px;
+			width: 200px;
+		}
+		.control button{
+			width: 160px;
+			height: 50px;
+			margin: 0 auto;
+			margin-top: 18px;
+			border:0;
+			background-color: blue;
+			border-radius: 25px;
+		}
+		.buttons{
+			width: 160px;
+			margin: 0 auto;
+			position: relative;
+			top:20px;
+		}
+		.snakebody{
+			background-color:#78E618;
+		}
+		.food{
+			background-color: red;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+		<div class="row">
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+			<div class="block"></div>
+		</div>
+	</div>
+	<div class="pop" style="display: none;">
+		<div class="control">
+			<div class="buttons">
+				<button id="normal">普通模式</button>
+				<button id="skip">过关模式</button>
+				<button id="elude">躲避模式</button>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<script src="snake.js">
+
+	</script>
+</body>
+</html>
