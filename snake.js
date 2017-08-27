@@ -1,6 +1,19 @@
 //获取到所有地图节点
     var rows=document.querySelectorAll(".row"),blocks=[],i,j;
 	var wrap=document.querySelector(".wrap");
+	var clone=function(myobj){
+		if(typeof myobj!="object"){
+			return myobj;
+		}
+		if(myobj == null){
+			return myobj;
+		}
+		var myNewObj=new Object();
+		for(var i in myobj){
+			myNewObj[i]=clone(myobj[i]);
+		}
+		return myNewObj;
+	}
 	for(i=0;i<10;i++){
 		blocks[i]=rows[i].children;
 	}
@@ -70,45 +83,97 @@
 	//向上方向
 	snake.prototype.upY=function(){
         var self=this;
-        var flag=self.head;
+        var point=self.head;
+        var flag=clone(self.head);
         self.head.x-=1;
-        while(self.next){
-            let change=flag;
-            self.next=change;
-            self=self.next;
+        while(self.head.next){
+        	console.log(point);
+        	var temp={};
+        	if(point.next!='null'&&point.next.x&&point.next.y){
+                temp.x=point.next.x;
+                temp.y=point.next.y;
+                point.next.x=flag.x;
+                point.next.y=flag.y;
+			}
+            if(point.next!='null'){
+                point=point.next;
+                flag.x=temp.x;
+                flag.y=temp.y;
+                console.log(flag.x);
+                console.log(flag.y);
+            }
         }
 	};
 	//向下方向
 	snake.prototype.downY=function (){
         var self=this;
-        var flag=self.head;
-        self.head.x-=1;
-        while(flag){
-            let change=flag.next;
-            self.next=change;
-            flag=flag.next;
+        var point=self.head;
+        var flag=clone(self.head);
+        self.head.x+=1;
+        while(self.head.next){
+            console.log(point);
+            var temp={};
+            if(point.next!='null'&&point.next.x&&point.next.y){
+                temp.x=point.next.x;
+                temp.y=point.next.y;
+                point.next.x=flag.x;
+                point.next.y=flag.y;
+            }
+            if(point.next!='null'){
+                point=point.next;
+                flag.x=temp.x;
+                flag.y=temp.y;
+                console.log(flag.x);
+                console.log(flag.y);
+            }
         }
 	};
 	//向左方向
 	snake.prototype.leftX=function(){
         var self=this;
-        var flag=self.head;
+        var point=self.head;
+        var flag=clone(self.head);
         self.head.y-=1;
-        while(flag){
-            let change=flag.next;
-            flag.next=change;
-            flag=flag.next;
+        while(self.head.next){
+            console.log(point);
+            var temp={};
+            if(point.next!='null'&&point.next.x&&point.next.y){
+                temp.x=point.next.x;
+                temp.y=point.next.y;
+                point.next.x=flag.x;
+                point.next.y=flag.y;
+            }
+            if(point.next!='null'){
+                point=point.next;
+                flag.x=temp.x;
+                flag.y=temp.y;
+                console.log(flag.x);
+                console.log(flag.y);
+            }
         }
 	};
 	//向右方向
 	snake.prototype.rightX=function(){
         var self=this;
-        var flag=self.head;
+        var point=self.head;
+        var flag=clone(self.head);
         self.head.y+=1;
-        while(flag){
-            let change=flag.next;
-            flag.next=change;
-            flag=flag.next;
+        while(self.head.next){
+            console.log(point);
+            var temp={};
+            if(point.next!='null'&&point.next.x&&point.next.y){
+                temp.x=point.next.x;
+                temp.y=point.next.y;
+                point.next.x=flag.x;
+                point.next.y=flag.y;
+            }
+            if(point.next!='null'){
+                point=point.next;
+                flag.x=temp.x;
+                flag.y=temp.y;
+                console.log(flag.x);
+                console.log(flag.y);
+            }
         }
 	};
 	//撞墙
