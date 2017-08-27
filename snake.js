@@ -14,6 +14,22 @@
 		}
 		return myNewObj;
 	}
+	//判断方向函数
+	const move=function(direction) {
+		if(direction=="up"){
+			if(runsnake.forward!="down")
+					runsnake.upY();
+			}else if(direction=="down"){
+				if(runsnake.forward!="up")
+					runsnake.downY();
+			}else if(direction=="right"){
+				 if(runsnake.forward!="left")
+					runsnake.rightX();
+		  }else if(direction=="left"){
+				if(runsnake.forward!="right")
+					runsnake.leftX();
+			}
+		}
 	for(i=0;i<10;i++){
 		blocks[i]=rows[i].children;
 	}
@@ -202,12 +218,18 @@
 			blocks[position.x][position.y].setAttribute("class","block snakebody");
 			flag=flag.next;
 		}
-	}
+    }
 	const game=function(){
         this.timmer=function(callback) {
         setInterval(
         callback
         ,400)
+		};
+        this.timmerSnake=function(callback){
+        	setInterval(
+        		callback,
+				1000
+			)
 		}
 	};
 	//开始游戏
@@ -242,6 +264,9 @@
 		this.timmer(()=>{
 			gamer.draw();
 		})
+        this.timmerSnake(()=>{
+            move(runsnake.forward);
+        })
 	};
 	//过关模式
 	game.prototype.skipMatch=function(){
@@ -251,6 +276,9 @@
         this.timmer(()=>{
             gamer.draw();
         })
+        this.timmerSnake(()=>{
+            move(runsnake.forward);
+        })
 	};
 	//躲避模式
 	game.prototype.elude=function(){
@@ -259,6 +287,9 @@
         let snakeNormal=new snake();
         this.timmer(()=>{
             gamer.draw();
+        })
+        this.timmerSnake(()=>{
+            move(runsnake.forward);
         })
 	};
 	//胜利判定
