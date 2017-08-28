@@ -1,6 +1,7 @@
 //获取到所有地图节点
     var rows=document.querySelectorAll(".row"),blocks=[],i,j;
 	var wrap=document.querySelector(".wrap");
+	let returnButton=document.getElementById("returnMain");
 	var clone=function(myobj){
 		if(typeof myobj!="object"){
 			return myobj;
@@ -29,7 +30,33 @@
 				if(runsnake.forward!="right")
 					runsnake.leftX();
 			}
-		}
+	}
+	const failed=function () {
+		let failedmenu=document.getElementsByClassName("failed");
+		failedmenu[0].style.display="block";
+    }
+    const win=function () {
+		let winmenu=document.getElementById("win");
+		winmenu.style.display="block";
+    }
+    const returnMain=function (condition) {
+        let pop=document.querySelector('.pop');
+        if(condition=="win"){
+            let winmenu=document.getElementById("win");
+            winmenu.style.display="none";
+            pop.style.display="block";
+            runsnake=null;
+            gamer=null;
+        }else{
+            let failedmenu=document.getElementById("failed");
+            failedmenu.style.display="none";
+            pop.style.display="block";
+            gamer.stop();
+        }
+    };
+    returnButton.onclick=function(){
+	    returnMain("failed");
+    };
 	for(i=0;i<10;i++){
 		blocks[i]=rows[i].children;
 	}
@@ -81,10 +108,24 @@
 		this.forward="up";
 	};
 	snake.prototype.eatFood=function(){
-
+        var self=this;
+        switch (self.forward){
+            case "up":this.tail.next=new body(this.tail.x+1,this.tail.y);
+                        this.tail=clone(this.tail.next);
+                        break;
+            case "down":this.tail.next=new body(this.tail.x-1,this.tail.y);
+                        this.tail=clone(this.tail.next);
+                        break;
+            case "left":this.tail.next=new body(this.tail.x,this.tail.y+1);
+                        this.tail=clone(this.tail.next);
+                        break;
+            case "right":this.tail.next=new body(this.tail.x,this.tail.y-1);
+                        this.tail=clone(this.tail.next);
+                        break;
+        }
 	};
 	//根据首位节点的位置以及当前的方向推断出所有节点的位置
-	snake.prototype.getAllBody=function(){
+	/*snake.prototype.getAllBody=function(){
 		let headx=this.head.getPosition().x,
 			heady=this.head.getPosition().y,
 			tailx=this.tail.getPosition().x,
@@ -95,7 +136,7 @@
 			case "left":;
 			case "right":;
 		}
-	};
+	};*/
 	//向上方向
 	snake.prototype.upY=function(){
         var self=this;
@@ -105,19 +146,20 @@
         while(self.head.next){
         	console.log(point);
         	var temp={};
-        	if(point.next!='null'&&point.next.x&&point.next.y){
                 temp.x=point.next.x;
                 temp.y=point.next.y;
                 point.next.x=flag.x;
                 point.next.y=flag.y;
-			}
-            if(point.next!='null'){
+            if(point.next!=='null'){
                 point=point.next;
                 flag.x=temp.x;
                 flag.y=temp.y;
                 console.log(flag.x);
                 console.log(flag.y);
             }
+            if(point.next==null){
+            	return false;
+			}
         }
 	};
 	//向下方向
@@ -129,18 +171,19 @@
         while(self.head.next){
             console.log(point);
             var temp={};
-            if(point.next!='null'&&point.next.x&&point.next.y){
                 temp.x=point.next.x;
                 temp.y=point.next.y;
                 point.next.x=flag.x;
                 point.next.y=flag.y;
-            }
             if(point.next!='null'){
                 point=point.next;
                 flag.x=temp.x;
                 flag.y=temp.y;
                 console.log(flag.x);
                 console.log(flag.y);
+            }
+            if(point.next==null){
+                return false;
             }
         }
 	};
@@ -153,18 +196,19 @@
         while(self.head.next){
             console.log(point);
             var temp={};
-            if(point.next!='null'&&point.next.x&&point.next.y){
                 temp.x=point.next.x;
                 temp.y=point.next.y;
                 point.next.x=flag.x;
                 point.next.y=flag.y;
-            }
             if(point.next!='null'){
                 point=point.next;
                 flag.x=temp.x;
                 flag.y=temp.y;
                 console.log(flag.x);
                 console.log(flag.y);
+            }
+            if(point.next==null){
+                return false;
             }
         }
 	};
@@ -177,18 +221,19 @@
         while(self.head.next){
             console.log(point);
             var temp={};
-            if(point.next!='null'&&point.next.x&&point.next.y){
                 temp.x=point.next.x;
                 temp.y=point.next.y;
                 point.next.x=flag.x;
                 point.next.y=flag.y;
-            }
             if(point.next!='null'){
                 point=point.next;
                 flag.x=temp.x;
                 flag.y=temp.y;
                 console.log(flag.x);
                 console.log(flag.y);
+            }
+            if(point.next==null){
+                return false;
             }
         }
 	};
@@ -204,33 +249,48 @@
 			return false;
 		}
 	};
+	//判断是否吃到自己
+	snake.prototype.eatItself=function () {};
 	snake.prototype.drawSnake=function(){
 		//清空之前的样式
-		for(let i=0;i<9;i++){
-			for(let j=0;j<9;j++){
+		for(let i=0;i<=9;i++){
+			for(let j=0;j<=9;j++){
                 blocks[i][j].setAttribute("class","block");
 			}
 		}
-		var self=this;
-		var flag=self.head;
-		while (flag!=null){
-			var position=flag.getPosition();
-			blocks[position.x][position.y].setAttribute("class","block snakebody");
-			flag=flag.next;
+		try {
+            var self = this;
+            var flag = clone(self.head);
+            while (flag != null) {
+                var position = flag.getPosition();
+                blocks[position.x][position.y].setAttribute("class", "block snakebody");
+                flag = flag.next;
+            }
+        }catch(err){
+			console.log("You are failed");
 		}
     }
 	const game=function(){
-        this.timmer=function(callback) {
-        setInterval(
-        callback
-        ,400)
-		};
-        this.timmerSnake=function(callback){
-        	setInterval(
-        		callback,
-				1000
-			)
-		}
+        this.timmer=setInterval(
+            ()=>{
+                //控制画面的绘制
+                gamer.draw();
+            }
+        ,200);
+        this.timmerSnake=setInterval(
+            ()=>{
+                //控制蛇身
+                move(runsnake.forward);
+            },
+                1000
+            );
+
+        this.timmerFailed=setInterval(
+            ()=>{
+                move(runsnake.forward);
+            },
+				500
+			);
 	};
 	//开始游戏
 	game.prototype.play=function(){
@@ -250,7 +310,18 @@
 		};
 	};
 	//游戏暂停
-	game.prototype.stop=function(){};
+	game.prototype.stop=function(){
+	    clearInterval(this.timmerFailed);
+	    clearInterval(this.timmerSnake);
+	    clearInterval(this.timmer);
+	    console.log("--------------------------")
+        console.log("--------------------------")
+        console.log("--------------------------")
+	    console.log("game has been stoped");
+        console.log("--------------------------")
+        console.log("--------------------------")
+        console.log("--------------------------")
+    };
 	//绘制画面
 	game.prototype.draw=function(){
 		console.log("game.draw was called");
@@ -261,12 +332,9 @@
         var pop=document.querySelector('.pop');
         pop.style.display="none";
 		let snakeNormal=new snake();
-		this.timmer(()=>{
-			gamer.draw();
+        this.timmerFailed(()=>{
+        	gamer.failed();
 		})
-        this.timmerSnake(()=>{
-            move(runsnake.forward);
-        })
 	};
 	//过关模式
 	game.prototype.skipMatch=function(){
@@ -285,18 +353,31 @@
         var pop=document.querySelector('.pop');
         pop.style.display="none";
         let snakeNormal=new snake();
-        this.timmer(()=>{
-            gamer.draw();
-        })
-        this.timmerSnake(()=>{
-            move(runsnake.forward);
-        })
 	};
 	//胜利判定
-	game.prototype.win=function(){};
+	game.prototype.win=function(){
+		for(let i=0;i<=9;i++){
+			for(let j=0;j<=9;j++){
+				if(blocks[i][j].className!='block snakebody'){
+					return false;
+				}else{
+					win();
+					return true;
+				}
+			}
+		}
+	};
 	//失败判定
-	game.prototype.failed=function(){};
-
+	game.prototype.failed=function(){
+		if(runsnake.wall()){
+            failed();
+            return true;
+		}else if(runsnake.eatItself())
+		{
+            failed();
+			return true;
+		}
+	};
 	document.onkeydown=()=> {
         var event = window.event || arguments[0];
         switch (event.keyCode) {
@@ -330,7 +411,7 @@
 	var gamer=new game();
 	var runsnake=new snake();
 	gamer.play();
-	var NormalSnaker=function(){
+	/*var NormalSnaker=function(){
 
 	};
 	var SkipSnaker=function () {
@@ -341,4 +422,4 @@
     };
 	inheirt(NormalSnaker,snake);
 	inheirt(SkipSnaker,snake);
-	inheirt(EludeSnaker,snake);
+	inheirt(EludeSnaker,snake);*/

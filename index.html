@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>贪吃蛇</title>
+	<meta charset="UTF-8">
 	<style type="text/css">
 		body{}
 		.wrap{
@@ -43,6 +44,15 @@
 		}
 		.food{
 			background-color: red;
+		}
+		.failed{
+			height: 300px;
+			width: 300px;
+			border: 1px solid black;
+			margin: auto;
+			position:absolute;
+			top: 0;bottom: 0;left: 0;right: 0;
+			background-color: aqua;
 		}
 	</style>
 </head>
@@ -178,8 +188,22 @@
 			</div>
 		</div>
 	</div>
-
-
+	<div class="failed" style="display: none" id="failed">
+		<div class="pop-head">
+			<h1>Failed</h1>
+		</div>
+		<div class="pop-body"><p>I am sorry.You are failed.Press the button to return to the main menu</p>
+			<button id="returnMain">return</button>
+		</div>
+	</div>
+	<div id="win" style="display: none">
+		<div class="pop-head">
+			<h1>Congratulation</h1>
+		</div>
+		<div class="pop-body">
+			<p>You have win the game</p>
+		</div>
+	</div>
 
 
 	<script src="snake.js">
