@@ -1,43 +1,50 @@
-//获取到所有地图节点
+    //获取到所有地图节点
     var rows=document.querySelectorAll(".row"),blocks=[],i,j;
 	var wrap=document.querySelector(".wrap");
-	let returnButton=document.getElementById("returnMain");
-	var clone=function(myobj){
-		if(typeof myobj!="object"){
-			return myobj;
-		}
-		if(myobj == null){
-			return myobj;
-		}
-		var myNewObj=new Object();
-		for(var i in myobj){
-			myNewObj[i]=clone(myobj[i]);
-		}
-		return myNewObj;
-	}
-	//判断方向函数
-	const move=function(direction) {
-		if(direction=="up"){
-			if(runsnake.forward!="down")
-					runsnake.upY();
-			}else if(direction=="down"){
-				if(runsnake.forward!="up")
-					runsnake.downY();
-			}else if(direction=="right"){
-				 if(runsnake.forward!="left")
-					runsnake.rightX();
-		  }else if(direction=="left"){
-				if(runsnake.forward!="right")
-					runsnake.leftX();
-			}
-	}
-	const failed=function () {
-		let failedmenu=document.getElementsByClassName("failed");
-		failedmenu[0].style.display="block";
+    var gamer;
+    //snake类
+    var inheirt=function(child,parent){
+        var f=new parent();
+        child.prototype=f;
+        child.prototype.constructor=child;
+    }
+    let returnButton=document.getElementById("returnMain");
+    var clone=function(myobj){
+        if(typeof myobj!="object"){
+            return myobj;
+        }
+        if(myobj == null){
+            return myobj;
+        }
+        var myNewObj=new Object();
+        for(var i in myobj){
+            myNewObj[i]=clone(myobj[i]);
+        }
+        return myNewObj;
+    }
+    //判断方向函数
+    const move=function(direction) {
+        if(direction=="up"){
+            if(runsnake.forward!="down")
+                runsnake.upY();
+        }else if(direction=="down"){
+            if(runsnake.forward!="up")
+                runsnake.downY();
+        }else if(direction=="right"){
+            if(runsnake.forward!="left")
+                runsnake.rightX();
+        }else if(direction=="left"){
+            if(runsnake.forward!="right")
+                runsnake.leftX();
+        }
+    }
+    const failed=function () {
+        let failedmenu=document.getElementsByClassName("failed");
+        failedmenu[0].style.display="block";
     }
     const win=function () {
-		let winmenu=document.getElementById("win");
-		winmenu.style.display="block";
+        let winmenu=document.getElementById("win");
+        winmenu.style.display="block";
     }
     const returnMain=function (condition) {
         let pop=document.querySelector('.pop');
@@ -45,111 +52,134 @@
             let winmenu=document.getElementById("win");
             winmenu.style.display="none";
             pop.style.display="block";
-            runsnake=null;
+            runsnake=new snake();
             gamer=null;
         }else{
             let failedmenu=document.getElementById("failed");
             failedmenu.style.display="none";
             pop.style.display="block";
             gamer.stop();
+            runsnake=new snake();
+            gamer=null;
         }
     };
     returnButton.onclick=function(){
-	    returnMain("failed");
+        returnMain("failed");
     };
-	for(i=0;i<10;i++){
-		blocks[i]=rows[i].children;
-	}
-	//数组blocks[10][10]存储了所有的节点
+    for(i=0;i<10;i++){
+        blocks[i]=rows[i].children;
+    }
+    //数组blocks[10][10]存储了所有的节点
     //游戏的设置
     var gameOpt={
-		snakeBeginLength:4,
-		speed:5,
-		foodspeed:3
+        snakeBeginLength:4,
+        speed:5,
+        foodspeed:3
     };
     //蛇身类
     const body=function(x,y,next){
-    	var self=this;
-		this.x=x;
-		this.y=y;
-		if(next){
-			this.next=next
-		}else
-			this.next=null;
-		this.getPosition=function(){
-			return {
-				x:self.x,
-				y:self.y
-			}
-		};
-		this.setNext=function(n){
-			self.next=n;
-		};
+        var self=this;
+        this.x=x;
+        this.y=y;
+        if(next){
+            this.next=next
+        }else
+            this.next=null;
+        this.getPosition=function(){
+            return {
+                x:self.x,
+                y:self.y
+            }
+        };
+        this.setNext=function(n){
+            self.next=n;
+        };
     };
     //食物类
     const food=function(x,y){
-    	var self=this;
-		this.x=x;
-		this.y=y;
-		this.getPosition=function () {
-			return {
-				x:self.x,
-				y:self.y
-			}
+        var self=this;
+        this.x=x;
+        this.y=y;
+        this.getPosition=function () {
+            return {
+                x:self.x,
+                y:self.y
+            }
         }
     };
-	//snake类
-	const snake=function(){
-		var self=this;
-		this.length=3;
-		this.body=[];
+    const game=function(){
+        this.timmer=setInterval(
+            ()=>{
+                //控制画面的绘制
+                gamer.draw();
+            }
+            ,200);
+        this.timmerSnake=setInterval(
+            ()=>{
+                //控制蛇身
+                move(runsnake.forward);
+            },
+            1000
+        );
+
+        this.timmerFailed=setInterval(
+            ()=>{
+                gamer.failed();
+            },
+            500
+        );
+    };
+    const snake=function(){
+        var self=this;
+        this.length=3;
+        this.body=[];
         this.tail=new body(4,6);
-		this.head=new body(4,4,new body(4,5,self.tail));
-		this.forward="up";
-	};
-	snake.prototype.eatFood=function(){
+        this.head=new body(4,4,new body(4,5,self.tail));
+        this.forward="up";
+    };
+    snake.prototype.eatFood=function(){
         var self=this;
         switch (self.forward){
             case "up":this.tail.next=new body(this.tail.x+1,this.tail.y);
-                        this.tail=clone(this.tail.next);
-                        break;
+                this.tail=clone(this.tail.next);
+                break;
             case "down":this.tail.next=new body(this.tail.x-1,this.tail.y);
-                        this.tail=clone(this.tail.next);
-                        break;
+                this.tail=clone(this.tail.next);
+                break;
             case "left":this.tail.next=new body(this.tail.x,this.tail.y+1);
-                        this.tail=clone(this.tail.next);
-                        break;
+                this.tail=clone(this.tail.next);
+                break;
             case "right":this.tail.next=new body(this.tail.x,this.tail.y-1);
-                        this.tail=clone(this.tail.next);
-                        break;
+                this.tail=clone(this.tail.next);
+                break;
         }
-	};
-	//根据首位节点的位置以及当前的方向推断出所有节点的位置
-	/*snake.prototype.getAllBody=function(){
-		let headx=this.head.getPosition().x,
-			heady=this.head.getPosition().y,
-			tailx=this.tail.getPosition().x,
-			taily=this.tail.getPosition().y;
-		switch (this.forward){
-			case "up":;
-			case "down":;
-			case "left":;
-			case "right":;
-		}
-	};*/
-	//向上方向
-	snake.prototype.upY=function(){
+    };
+    //根据首位节点的位置以及当前的方向推断出所有节点的位置
+    /*snake.prototype.getAllBody=function(){
+     let headx=this.head.getPosition().x,
+     heady=this.head.getPosition().y,
+     tailx=this.tail.getPosition().x,
+     taily=this.tail.getPosition().y;
+     switch (this.forward){
+     case "up":;
+     case "down":;
+     case "left":;
+     case "right":;
+     }
+     };*/
+    //向上方向
+    snake.prototype.upY=function(){
         var self=this;
         var point=self.head;
         var flag=clone(self.head);
         self.head.x-=1;
         while(self.head.next){
-        	console.log(point);
-        	var temp={};
-                temp.x=point.next.x;
-                temp.y=point.next.y;
-                point.next.x=flag.x;
-                point.next.y=flag.y;
+            console.log(point);
+            var temp={};
+            temp.x=point.next.x;
+            temp.y=point.next.y;
+            point.next.x=flag.x;
+            point.next.y=flag.y;
             if(point.next!=='null'){
                 point=point.next;
                 flag.x=temp.x;
@@ -158,12 +188,12 @@
                 console.log(flag.y);
             }
             if(point.next==null){
-            	return false;
-			}
+                return false;
+            }
         }
-	};
-	//向下方向
-	snake.prototype.downY=function (){
+    };
+    //向下方向
+    snake.prototype.downY=function (){
         var self=this;
         var point=self.head;
         var flag=clone(self.head);
@@ -171,10 +201,10 @@
         while(self.head.next){
             console.log(point);
             var temp={};
-                temp.x=point.next.x;
-                temp.y=point.next.y;
-                point.next.x=flag.x;
-                point.next.y=flag.y;
+            temp.x=point.next.x;
+            temp.y=point.next.y;
+            point.next.x=flag.x;
+            point.next.y=flag.y;
             if(point.next!='null'){
                 point=point.next;
                 flag.x=temp.x;
@@ -186,9 +216,9 @@
                 return false;
             }
         }
-	};
-	//向左方向
-	snake.prototype.leftX=function(){
+    };
+    //向左方向
+    snake.prototype.leftX=function(){
         var self=this;
         var point=self.head;
         var flag=clone(self.head);
@@ -196,10 +226,10 @@
         while(self.head.next){
             console.log(point);
             var temp={};
-                temp.x=point.next.x;
-                temp.y=point.next.y;
-                point.next.x=flag.x;
-                point.next.y=flag.y;
+            temp.x=point.next.x;
+            temp.y=point.next.y;
+            point.next.x=flag.x;
+            point.next.y=flag.y;
             if(point.next!='null'){
                 point=point.next;
                 flag.x=temp.x;
@@ -211,9 +241,9 @@
                 return false;
             }
         }
-	};
-	//向右方向
-	snake.prototype.rightX=function(){
+    };
+    //向右方向
+    snake.prototype.rightX=function(){
         var self=this;
         var point=self.head;
         var flag=clone(self.head);
@@ -221,10 +251,10 @@
         while(self.head.next){
             console.log(point);
             var temp={};
-                temp.x=point.next.x;
-                temp.y=point.next.y;
-                point.next.x=flag.x;
-                point.next.y=flag.y;
+            temp.x=point.next.x;
+            temp.y=point.next.y;
+            point.next.x=flag.x;
+            point.next.y=flag.y;
             if(point.next!='null'){
                 point=point.next;
                 flag.x=temp.x;
@@ -236,29 +266,29 @@
                 return false;
             }
         }
-	};
-	//撞墙
-	snake.prototype.wall=function(){
-		var self=this;
-		if(self.head.x<0||
-			self.head.x>9||
-			self.head.y<0||
-			self.head.y>9){
-			return true;
-		}else{
-			return false;
-		}
-	};
-	//判断是否吃到自己
-	snake.prototype.eatItself=function () {};
-	snake.prototype.drawSnake=function(){
-		//清空之前的样式
-		for(let i=0;i<=9;i++){
-			for(let j=0;j<=9;j++){
+    };
+    //撞墙
+    snake.prototype.wall=function(){
+        var self=this;
+        if(self.head.x<0||
+            self.head.x>9||
+            self.head.y<0||
+            self.head.y>9){
+            return true;
+        }else{
+            return false;
+        }
+    };
+    //判断是否吃到自己
+    snake.prototype.eatItself=function () {};
+    snake.prototype.drawSnake=function(){
+        //清空之前的样式
+        for(let i=0;i<=9;i++){
+            for(let j=0;j<=9;j++){
                 blocks[i][j].setAttribute("class","block");
-			}
-		}
-		try {
+            }
+        }
+        try {
             var self = this;
             var flag = clone(self.head);
             while (flag != null) {
@@ -267,45 +297,54 @@
                 flag = flag.next;
             }
         }catch(err){
-			console.log("You are failed");
-		}
+            console.log("You are failed");
+        }
     }
-	const game=function(){
-        this.timmer=setInterval(
-            ()=>{
-                //控制画面的绘制
-                gamer.draw();
-            }
-        ,200);
-        this.timmerSnake=setInterval(
-            ()=>{
-                //控制蛇身
-                move(runsnake.forward);
-            },
-                1000
-            );
 
-        this.timmerFailed=setInterval(
-            ()=>{
-                move(runsnake.forward);
-            },
-				500
-			);
-	};
+    var NormalSnaker=function(){
+        var self=this;
+        this.length=3;
+        this.body=[];
+        this.tail=new body(4,6);
+        this.head=new body(4,4,new body(4,5,self.tail));
+        this.forward="up";
+    };
+    var SkipSnaker=function () {
+        var self=this;
+        this.length=3;
+        this.body=[];
+        this.tail=new body(4,6);
+        this.head=new body(4,4,new body(4,5,self.tail));
+        this.forward="up";
+    };
+    var EludeSnaker=function () {
+        var self=this;
+        this.length=3;
+        this.body=[];
+        this.tail=new body(4,6);
+        this.head=new body(4,4,new body(4,5,self.tail));
+        this.forward="up";
+    };
+    inheirt(NormalSnaker,snake);
+    inheirt(SkipSnaker,snake);
+    inheirt(EludeSnaker,snake);
 	//开始游戏
-	game.prototype.play=function(){
+	function play(){
 		var pop=document.querySelector('.pop');
 		var skip=document.querySelector('#skip');
 		var elude=document.querySelector('#elude');
 		pop.style.display="block";
 		var normalpaly=document.querySelector('#normal');
 		normalpaly.onclick=()=>{
+            gamer=new game();
 			gamer.normalBegin();
 		};
 		skip.onclick=()=>{
+            gamer=new game();
 			gamer.skipMatch();
 		};
 		elude.onclick=()=>{
+            gamer=new game();
 			gamer.elude();
 		};
 	};
@@ -402,24 +441,6 @@
         }
         console.log(event.code);
     }
-	var inheirt=function(child,parent){
-		var f=new parent();
-		child.prototype=f;
-		child.prototype.constructor=child;
-	}
-
-	var gamer=new game();
 	var runsnake=new snake();
-	gamer.play();
-	/*var NormalSnaker=function(){
+	play();
 
-	};
-	var SkipSnaker=function () {
-
-    };
-	var EludeSnaker=function () {
-
-    };
-	inheirt(NormalSnaker,snake);
-	inheirt(SkipSnaker,snake);
-	inheirt(EludeSnaker,snake);*/
