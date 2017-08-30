@@ -1,7 +1,9 @@
     //获取到所有地图节点
     var rows=document.querySelectorAll(".row"),blocks=[],i,j;
 	var wrap=document.querySelector(".wrap");
+    var foodexist=false;
     var gamer;
+    var foodArray=[];
     //snake类
     var inheirt=function(child,parent){
         var f=new parent();
@@ -22,6 +24,32 @@
         }
         return myNewObj;
     }
+    function meetFood() {
+        for(let i=0;i<=9;i++){
+            for(let j=0;j<=9;j++){
+                if(blocks[i][j].getAttribute("class")=="block food"){
+                    if(runsnake.head.x==i&&runsnake.head.y==j){
+                        runsnake.eatFood({
+                            x:i,
+                            y:j
+                        });
+                    }
+                }
+            }
+        }
+    }
+    //食物类
+    var food=function(x,y){
+        var self=this;
+        this.x=x;
+        this.y=y;
+        this.getPosition=function () {
+            return {
+                x:self.x,
+                y:self.y
+            }
+        }
+    };
     //判断方向函数
     const move=function(direction) {
         if(direction=="up"){
@@ -95,22 +123,11 @@
             self.next=n;
         };
     };
-    //食物类
-    const food=function(x,y){
-        var self=this;
-        this.x=x;
-        this.y=y;
-        this.getPosition=function () {
-            return {
-                x:self.x,
-                y:self.y
-            }
-        }
-    };
     const game=function(){
         this.timmer=setInterval(
             ()=>{
                 //控制画面的绘制
+                meetFood();
                 gamer.draw();
             }
             ,200);
@@ -137,22 +154,12 @@
         this.head=new body(4,4,new body(4,5,self.tail));
         this.forward="up";
     };
-    snake.prototype.eatFood=function(){
-        var self=this;
-        switch (self.forward){
-            case "up":this.tail.next=new body(this.tail.x+1,this.tail.y);
-                this.tail=clone(this.tail.next);
-                break;
-            case "down":this.tail.next=new body(this.tail.x-1,this.tail.y);
-                this.tail=clone(this.tail.next);
-                break;
-            case "left":this.tail.next=new body(this.tail.x,this.tail.y+1);
-                this.tail=clone(this.tail.next);
-                break;
-            case "right":this.tail.next=new body(this.tail.x,this.tail.y-1);
-                this.tail=clone(this.tail.next);
-                break;
-        }
+    snake.prototype.eatFood=function(food){
+        var temp=clone(runsnake.head);
+        runsnake.head.x=food.x;
+        runsnake.head.y=food.y;
+        runsnake.head.next=temp;
+        foodexist=true;
     };
     //根据首位节点的位置以及当前的方向推断出所有节点的位置
     /*snake.prototype.getAllBody=function(){
@@ -288,12 +295,14 @@
                 blocks[i][j].setAttribute("class","block");
             }
         }
+        for(let i=0;i<foodArray.length;i++){
+            blocks[foodArray[i].x][foodArray[i].y].setAttribute("class","block food");
+        }
         try {
             var self = this;
             var flag = clone(self.head);
             while (flag != null) {
-                var position = flag.getPosition();
-                blocks[position.x][position.y].setAttribute("class", "block snakebody");
+                blocks[flag.x][flag.y].setAttribute("class", "block snakebody");
                 flag = flag.next;
             }
         }catch(err){
@@ -301,6 +310,25 @@
         }
     }
 
+    //食物产生器
+    const foodMaker=function (time,count) {
+        setInterval(function () {
+            if(foodexist==false){
+                for(let i=0;i<count;i++){
+                    var x=parseInt(Math.random()*9, 10);
+                    var y=parseInt(Math.random()*9, 10);
+                    //var food=new food(x,y);
+                    foodArray.push({
+                        x:x,
+                        y:y
+                    });
+                    blocks[x][y].setAttribute("class","block food");
+                    console.log(`a food was created on ${x}${y}`);
+                }
+                foodexist=true;
+            }
+        },time);
+    }
     var NormalSnaker=function(){
         var self=this;
         this.length=3;
